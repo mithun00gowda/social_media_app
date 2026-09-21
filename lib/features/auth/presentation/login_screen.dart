@@ -31,18 +31,27 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text('ChatterFeed', textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+              const Text(
+                'ChatterFeed',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 32),
               TextField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 24),
 
@@ -72,8 +81,25 @@ class _LoginScreenState extends State<LoginScreen> {
                 selector: (context, auth) => auth.state.errorMessage,
                 builder: (context, errorMessage, _) {
                   if (errorMessage == null) return const SizedBox.shrink();
-                  return Text(errorMessage, style: const TextStyle(color: Colors.red));
+                  return Text(
+                    errorMessage,
+                    style: const TextStyle(color: Colors.red),
+                  );
                 },
+              ),
+              Selector<AuthProvider, AuthStatus>(
+                builder: (context, status, _) {
+                  if (status == AuthStatus.authenticated) {
+                    return ElevatedButton(
+                      onPressed: () {
+                        context.read<AuthProvider>().logOut();
+                      },
+                      child: Text('Logout'),
+                    );
+                  }
+                  return SizedBox();
+                },
+                selector: (context, auth) => auth.state.status,
               ),
             ],
           ),

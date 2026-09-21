@@ -3,7 +3,7 @@ import '../data/auth_repository.dart';
 import 'auth_state.dart';
 
 class AuthProvider extends ChangeNotifier {
-  AuthProvider({required this._repository});
+  AuthProvider(this._repository);
 
   final AuthRepository _repository;
   AuthState _state = AuthState.initial();

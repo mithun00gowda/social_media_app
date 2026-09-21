@@ -1,4 +1,4 @@
-import 'package:social_feed_app/core/models/messages.dart';
+import 'package:social_feed_app/core/models/message.dart';
 
 enum ChatStatus { idle, loading, loaded, error }
 
@@ -14,6 +14,9 @@ class ChatState {
   });
 
   const ChatState.idle() : this(status: ChatStatus.idle);
+  bool get isLoading => status == ChatStatus.loading;
+  bool get hasMessage => messages.isNotEmpty;
+
 
   ChatState copyWith({
     ChatStatus? status,
