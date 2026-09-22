@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_feed_app/features/auth/providers/auth_provider.dart';
 import 'package:social_feed_app/features/auth/providers/auth_state.dart';
+import 'package:social_feed_app/features/chat/presentation/feed_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -63,11 +64,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     return Center(child: const CircularProgressIndicator());
                   }
                   return ElevatedButton(
-                    onPressed: () {
-                      context.read<AuthProvider>().login(
+                    onPressed: () async {
+                      await context.read<AuthProvider>().login(
                         _emailController.text,
                         _passwordController.text,
                       );
+                      if (context.mounted &&
+                          context.read<AuthProvider>().state.status ==
+                              AuthStatus.authenticated) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (_) => const FeedScreen()),
+                        );
+                      }
                     },
                     child: const Text('Login'),
                   );
