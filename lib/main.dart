@@ -10,9 +10,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => AuthProvider(AuthRepository()),
-        ),
+        ChangeNotifierProvider(create: (_) => AuthProvider(AuthRepository())),
         ChangeNotifierProxyProvider<AuthProvider, ChatProvider>(
           create: (context) => ChatProvider(
             ChatRepository(),
