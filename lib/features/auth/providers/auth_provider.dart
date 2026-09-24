@@ -16,7 +16,9 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     try{
       final user = await _repository.login(email, password);
+      await _repository.saveUserLocally(user);
       _state = state.copyWith(status: AuthStatus.authenticated,user: user);
+      
     }catch(e){
   _state = _state.copyWith(status: AuthStatus.error,errorMessage: e.toString());
     }
