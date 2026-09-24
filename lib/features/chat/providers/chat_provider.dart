@@ -1,5 +1,8 @@
 // features/chat/providers/chat_provider.dart
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+import 'package:social_feed_app/core/models/message.dart';
 import '../../../core/models/user.dart';
 import '../data/chat_repository.dart';
 import 'chat_state.dart';
@@ -13,6 +16,8 @@ class ChatProvider extends ChangeNotifier {
   ChatState _state = const ChatState.idle();
   String? _currentUserId;
   AppUser? _currentUser;
+  StreamSubscription<Message>? _incomingSubscription;
+
 
   ChatState get state => _state;
 
@@ -22,6 +27,8 @@ class ChatProvider extends ChangeNotifier {
       _currentUserId = null;
       _currentUser = null;
       _state = const ChatState.idle();
+      _incomingSubscription?.cancel();
+      _incomingSubscription = null;
       notifyListeners();
       return;
     }
@@ -29,6 +36,7 @@ class ChatProvider extends ChangeNotifier {
     _currentUserId = user.id;
     _currentUser = user;
     _loadMessages(user.id);
+    _startLisitingForIncoming();
   }
 
   Future<void> _loadMessages(String userId) async {
@@ -54,6 +62,22 @@ class ChatProvider extends ChangeNotifier {
       _state = _state.copyWith(errorMessage: e.toString(),isSending: false);
     }
     notifyListeners();
+  }
+
+  void _startLisitingForIncoming(){
+    _incomingSubscription?.cancel();
+    _incomingSubscription = _repository.incomingMessageStream().listen((newMessage){
+      final updatedMessage = [...state.messages,newMessage];
+      _state = _state.copyWith(messages: updatedMessage);
+      notifyListeners();
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _incomingSubscription?.cancel();
+    super.dispose();
   }
 
   // Public method the proxy calls on every AuthProvider change

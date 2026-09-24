@@ -22,7 +22,7 @@ void main() {
 
   setUp(() {
     mockAuthRepository = MockAuthRepository();
-    authProvider = AuthProvider(mockAuthRepository);
+    authProvider = AuthProvider(repository: mockAuthRepository);
   });
 
   testWidgets(

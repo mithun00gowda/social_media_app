@@ -11,7 +11,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (_) => AuthProvider(AuthRepository())),
+            create: (_) => AuthProvider(repository: AuthRepository())),
         ChangeNotifierProxyProvider<AuthProvider, ChatProvider>(
           create: (context) => ChatProvider(
             ChatRepository(),

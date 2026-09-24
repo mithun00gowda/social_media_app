@@ -33,4 +33,13 @@ class ChatRepository {
       sentAt: DateTime.now(),
     );
   }
+
+  Stream<Message> incomingMessageStream() async*{
+    int counter = 0;
+    while(true){
+      await Future.delayed(Duration(seconds: 4));
+      counter++;
+      yield Message(id: uuid.v4(), senderId: 'other', senderName: 'Alex', text: 'Income message #$counter', sentAt: DateTime.now());
+    }
+  }
 }
