@@ -1,6 +1,6 @@
 import 'package:social_feed_app/core/models/user.dart';
 
-enum AuthStatus { initial, loading, authenticated, error }
+enum AuthStatus { initial, loading, authenticated,unauthenticated, error }
 
 class AuthState {
   final AuthStatus status;
@@ -18,10 +18,11 @@ class AuthState {
     AuthStatus? status,
     AppUser? user,
     String? errorMessage,
+    bool clearUser = false
   }) {
     return AuthState(
       status: status ?? this.status,
-      user: user ?? this.user,
+      user:clearUser ? null : (user ?? this.user),
       errorMessage: errorMessage,
     );
   }

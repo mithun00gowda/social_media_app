@@ -34,108 +34,93 @@ class _FeedScreenState extends State<FeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<AuthProvider, AuthStatus>(
-      selector: (context, auth) => auth.state.status,
-      builder: (context, authStatus, child) {
-        if (authStatus != AuthStatus.authenticated) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
-              );
-            }
-          });
-        }
-        return child!;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('ChatterFeed'),
-          actions: [
-            IconButton(
-              onPressed: () => context.read<AuthProvider>().logOut(),
-              icon: const Icon(Icons.logout),
-            ),
-          ],
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: Selector<ChatProvider, ChatStatus>(
-                selector: (context, chat) => chat.state.status,
-                builder: (context, status, _) {
-                  if (status == ChatStatus.loading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (status == ChatStatus.error) {
-                    return Center(
-                      child: Selector<ChatProvider, String?>(
-                        selector: (context, chat) => chat.state.errorMessage,
-                        builder: (context, error, _) =>
-                            Text(error ?? 'Something went wrong'),
-                      ),
-                    );
-                  }
-                  return _MessageList();
-                },
-              ),
-            ),
-            Selector<ChatProvider, String?>(
-              builder: (context, error, _) {
-                if (error == null) return SizedBox.shrink();
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  child: Text(
-                    error,
-                    style: TextStyle(color: Colors.red, fontSize: 12),
-                  ),
-                );
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ChatterFeed'),
+        actions: [
+          IconButton(
+            onPressed: () => context.read<AuthProvider>().logOut(),
+            icon: const Icon(Icons.logout),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Selector<ChatProvider, ChatStatus>(
+              selector: (context, chat) => chat.state.status,
+              builder: (context, status, _) {
+                if (status == ChatStatus.loading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (status == ChatStatus.error) {
+                  return Center(
+                    child: Selector<ChatProvider, String?>(
+                      selector: (context, chat) => chat.state.errorMessage,
+                      builder: (context, error, _) =>
+                          Text(error ?? 'Something went wrong'),
+                    ),
+                  );
+                }
+                return _MessageList();
               },
-              selector: (context, chat) =>
-                  chat.state.status == ChatStatus.loaded
-                  ? chat.state.errorMessage
-                  : null,
             ),
-            SafeArea(
-              child: Padding(
-                padding: EdgeInsets.all(8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _messageController,
-                        decoration: const InputDecoration(
-                          hintText: 'Type a message...',
-                          border: OutlineInputBorder(),
-                        ),
+          ),
+          Selector<ChatProvider, String?>(
+            builder: (context, error, _) {
+              if (error == null) return SizedBox.shrink();
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                child: Text(
+                  error,
+                  style: TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              );
+            },
+            selector: (context, chat) =>
+                chat.state.status == ChatStatus.loaded
+                ? chat.state.errorMessage
+                : null,
+          ),
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: const InputDecoration(
+                        hintText: 'Type a message...',
+                        border: OutlineInputBorder(),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Selector<ChatProvider, bool>(
-                      builder: (context, isSending, _) {
-                        return IconButton(
-                          onPressed: isSending
-                              ? null
-                              : () => _handleSend(context),
-                          icon: isSending
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Icon(Icons.send),
-                        );
-                      },
-                      selector: (context, chat) => chat.state.isSending,
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 8),
+                  Selector<ChatProvider, bool>(
+                    builder: (context, isSending, _) {
+                      return IconButton(
+                        onPressed: isSending
+                            ? null
+                            : () => _handleSend(context),
+                        icon: isSending
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.send),
+                      );
+                    },
+                    selector: (context, chat) => chat.state.isSending,
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

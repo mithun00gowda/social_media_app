@@ -27,14 +27,19 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> _checkSavedUser() async{
     final savedUser = await  _repository.getSavedUser();
-    if(savedUser != null){
-      _state = _state.copyWith(status: AuthStatus.authenticated,user: savedUser);
-      notifyListeners();
+    if(savedUser != null) {
+      _state =
+          _state.copyWith(status: AuthStatus.authenticated, user: savedUser);
+    }else{
+      _state = _state.copyWith(status: AuthStatus.unauthenticated);
     }
+    notifyListeners();
   }
 
-  void logOut(){
-    _state = const AuthState.initial();
+  void logOut() async{
+    await _repository.clearSavedUser();
+
+    _state = _state.copyWith(status: AuthStatus.unauthenticated,clearUser: true);
     notifyListeners();
   }
 }
