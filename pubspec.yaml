@@ -37,6 +37,8 @@ dependencies:
   provider:
   uuid:
   shared_preferences:
+  hive:
+  hive_flutter:
 
 dev_dependencies:
   flutter_test:

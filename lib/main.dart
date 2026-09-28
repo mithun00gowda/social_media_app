@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:social_feed_app/features/auth/data/auth_repository.dart';
 import 'package:social_feed_app/features/auth/presentation/login_screen.dart';
@@ -9,6 +11,9 @@ import 'features/chat/data/chat_repository.dart';
 import 'features/chat/providers/chat_provider.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  final messageBox = await Hive.openBox<String>('message');
   runApp(
     MultiProvider(
       providers: [
@@ -17,7 +22,7 @@ void main() async {
         ),
         ChangeNotifierProxyProvider<AuthProvider, ChatProvider>(
           create: (context) => ChatProvider(
-            ChatRepository(),
+            ChatRepository(messageBox),
             context.read<AuthProvider>().state.user,
           ),
           update: (context, authProvider, previousChatProvider) {
