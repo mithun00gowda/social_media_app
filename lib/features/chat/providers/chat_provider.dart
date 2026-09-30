@@ -40,15 +40,22 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<void> _loadMessages(String userId) async {
-    _state = _state.copyWith(status: ChatStatus.loading);
-    notifyListeners();
-    try {
-      final messages = await _repository.fetchMessages(userId);
-      _state = _state.copyWith(status: ChatStatus.loaded, messages: messages);
-    } catch (e) {
-      _state = _state.copyWith(status: ChatStatus.error, errorMessage: e.toString());
+    final cachedMessage = await _repository.getCachedMessage(userId);
+    if(cachedMessage.isNotEmpty){
+      _state = _state.copyWith(status: ChatStatus.loaded,messages: cachedMessage);
+    } else{
+      _state = _state.copyWith(status: ChatStatus.loading);
     }
+
     notifyListeners();
+    // try {
+    //   final messages = await _repository.fetchMessages(userId);
+    //   _state = _state.copyWith(status: ChatStatus.loaded, messages: messages);
+    // } catch (e) {
+    //   _state = _state.copyWith(status: ChatStatus.error, errorMessage: e.toString());
+    // }
+    // notifyListeners();
+    return;
   }
 
   Future<void> sendMessage(String text) async {
